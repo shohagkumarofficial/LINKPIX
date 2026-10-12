@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api, ApiError } from "./api";
+import { useEffect, useRef, useState } from "react";
+import { api, ApiError, uploadImage } from "./api";
 import { fmt, hostOf, timeAgo } from "./format";
 import { confirmDialog, copyText, haptic, openExternal, openShare } from "./tg";
 import { Empty, ErrorLine, Icon, Segmented, Thumb } from "./ui";
@@ -301,6 +301,25 @@ function EditForm({ link, onDone }: { link: LinkItemData; onDone: (saved: boolea
   const [caption, setCaption] = useState(link.caption ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function pickFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      setImage(await uploadImage(file));
+      haptic("success");
+    } catch (err) {
+      haptic("error");
+      setError(err instanceof ApiError ? err.message : "Couldn't upload the picture.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -336,7 +355,20 @@ function EditForm({ link, onDone }: { link: LinkItemData; onDone: (saved: boolea
         />
       </div>
       <div className="field">
-        <label htmlFor={`e-image-${link.code}`}>Image link</label>
+        <label htmlFor={`e-image-${link.code}`}>Picture</label>
+        <div className="btn-row">
+          <button type="button" className="btn btn-quiet btn-sm" onClick={() => fileRef.current?.click()} disabled={uploading}>
+            <Icon name="image" size={16} />
+            {uploading ? "Uploading…" : image ? "Choose another" : "Upload picture"}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            hidden
+            onChange={pickFile}
+          />
+        </div>
         <input
           id={`e-image-${link.code}`}
           type="url"
