@@ -1402,3 +1402,19 @@ ul {
     animation: none !important;
   }
 }
+
+/* Share buttons */
+.share {
+  margin-top: 16px;
+}
+.share-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.chip-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

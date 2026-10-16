@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { api, ApiError, uploadImage } from "./api";
 import { SharePreview, type ImageState } from "./SharePreview";
-import { copyText, haptic, openShare } from "./tg";
+import { copyText, haptic } from "./tg";
+import { ShareButtons } from "./ShareButtons";
 import { ErrorLine, Icon } from "./ui";
 
 interface Created {
@@ -125,11 +126,8 @@ export function CreateTab({
               <Icon name="copy" size={18} />
               Copy link
             </button>
-            <button type="button" className="btn btn-quiet" onClick={() => openShare(created.short_url, caption || undefined)}>
-              <Icon name="share" size={18} />
-              Share
-            </button>
           </div>
+          <ShareButtons url={created.short_url} text={caption || undefined} onCopy={copy} />
           <p className="help">
             To see which platform your clicks come from, add a tag to the end when you post, for example{" "}
             <button type="button" className="inline-copy" onClick={() => copy(`${created.short_url}?src=facebook`)}>

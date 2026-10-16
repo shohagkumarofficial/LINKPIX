@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { api, ApiError, uploadImage } from "./api";
 import { fmt, hostOf, timeAgo } from "./format";
-import { confirmDialog, copyText, haptic, openExternal, openShare } from "./tg";
+import { confirmDialog, copyText, haptic, openExternal } from "./tg";
+import { ShareButtons } from "./ShareButtons";
 import { Empty, ErrorLine, Icon, Segmented, Thumb } from "./ui";
 
 export interface LinkItemData {
@@ -246,15 +247,13 @@ function LinkRow({
                   <Icon name="copy" size={16} />
                   Copy
                 </button>
-                <button type="button" className="btn btn-quiet btn-sm" onClick={() => openShare(shortUrl, link.caption || undefined)}>
-                  <Icon name="share" size={16} />
-                  Share
-                </button>
                 <button type="button" className="btn btn-quiet btn-sm" onClick={() => onOpenAnalytics(link.code)}>
                   <Icon name="chart" size={16} />
                   Analytics
                 </button>
               </div>
+
+              <ShareButtons url={shortUrl} text={link.caption || undefined} onCopy={(u) => copy(u)} />
 
               <div className="tagbox">
                 <p className="tagbox-title">Copy a tracked link</p>
